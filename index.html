@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API VOLKANIK - Extension Methods | ADRIEL NOFRA MARCELINO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a0a05 0%, #2d1308 30%, #3d1a0a 70%, #1f0c04 100%);
+            color: #ffeed9;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Lava flow animation background */
+        .volcano-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .lava-particle {
+            position: absolute;
+            bottom: -20px;
+            width: 4px;
+            height: 4px;
+            background: #ff6b35;
+            border-radius: 50%;
+            opacity: 0;
+            animation: lavaRise 8s linear infinite;
+            box-shadow: 0 0 8px #ff4500;
+        }
+
+        @keyframes lavaRise {
+            0% { bottom: -20px; opacity: 0; transform: translateX(0); }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.6; }
+            100% { bottom: 100%; opacity: 0; transform: translateX(40px); }
+        }
+
+        .magma-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 80%, rgba(255, 69, 0, 0.12), transparent 70%),
+                        radial-gradient(circle at 20% 40%, rgba(255, 100, 0, 0.08), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ash-fall {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(2px 3px at 15px 60px, #5a3a2a, rgba(0,0,0,0)),
+                              radial-gradient(3px 2px at 72px 436px, #7a4a2a, rgba(0,0,0,0));
+            background-repeat: repeat;
+            animation: ashFall 25s linear infinite;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        @keyframes ashFall {
+            from { background-position: 0 0; }
+            to { background-position: 0 500px; }
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px 50px;
+            background: linear-gradient(145deg, rgba(40, 15, 5, 0.96), rgba(25, 8, 2, 0.96));
+            border-bottom: 3px solid #ff6b35;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.3);
+        }
+
+        header h1 {
+            font-size: 3.2em;
+            background: linear-gradient(135deg, #ff8c42, #ff4500, #ff6b35, #ffb347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
+        }
+
+        header p {
+            color: #ffaa77;
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .intro-box {
+            background: linear-gradient(145deg, rgba(60, 30, 15, 0.92), rgba(40, 18, 8, 0.92));
+            border: 2px solid #ff6b35;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 35px rgba(255, 69, 0, 0.3), inset 0 1px 0 rgba(255, 140, 66, 0.3);
+        }
+
+        .intro-box h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            font-family: 'Orbitron', monospace;
+            color: #ff8c42;
+        }
+
+        .intro-box p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .daftar-isi {
+            background: rgba(45, 20, 8, 0.85);
+            border: 1px solid #ff6b35;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .daftar-isi a {
+            color: #ffddbb;
+            text-decoration: none;
+            padding: 8px 18px;
+            border: 1px solid #ff6b35;
+            border-radius: 30px;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .daftar-isi a:hover {
+            background: #ff6b35;
+            color: #1a0a05;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.6);
+            text-shadow: none;
+        }
+
+        .card {
+            background: linear-gradient(145deg, rgba(55, 28, 12, 0.9), rgba(35, 16, 6, 0.9));
+            border: 1px solid #ff6b35;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.12), transparent);
+            transition: left 0.6s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 69, 0, 0.4);
+            border-color: #ff8c42;
+        }
+
+        .card h2 {
+            color: #ff8c42;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+            font-family: 'Orbitron', monospace;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .card p {
+            color: #ffddbb;
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 107, 53, 0.25);
+            border: 1px solid #ff6b35;
+            color: #ffaa66;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            font-weight: normal;
+            margin-left: 10px;
+        }
+
+        .badge-lava { background: #ff4500; color: #1f0c04; border-color: #ff8c42; font-weight: bold; }
+        .badge-magma { background: #b83d00; color: #ffddbb; border-color: #ff6b35; }
+
+        .code-container {
+            background: #1a0b05;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 1px solid #b83d00;
+        }
+
+        .code-header {
+            background: #2d1508;
+            padding: 10px 15px;
+            border-bottom: 1px solid #b83d00;
+            font-size: 0.85em;
+            color: #ff8c42;
+            font-family: 'Orbitron', monospace;
+        }
+
+        pre {
+            background: #0f0602;
+            color: #ffbb88;
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff6b35, #ff4500);
+            color: #1a0a05;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 10px;
+            font-size: 0.85em;
+            box-shadow: 0 2px 10px rgba(255, 69, 0, 0.4);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 107, 53, 0.8);
+            background: linear-gradient(135deg, #ff8c42, #ff6b35);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.97);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(12px);
+        }
+
+        .modal-content {
+            width: 95%;
+            height: 95%;
+            background: #1a0b05;
+            border: 2px solid #ff4500;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 0 60px rgba(255, 69, 0, 0.6);
+        }
+
+        .modal-header {
+            position: absolute;
+            top: -45px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ff8c42;
+        }
+
+        .modal-title {
+            background: #1a0b05;
+            padding: 8px 20px;
+            border: 2px solid #ff4500;
+            border-radius: 30px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9em;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            background: #ff4500;
+            border-radius: 50%;
+            color: #1a0a05;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+            box-shadow: 0 0 20px #ff6b35;
+        }
+
+        .modal-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 18px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(145deg, rgba(30, 12, 4, 0.96), rgba(20, 6, 2, 0.96));
+            border-top: 2px solid #ff6b35;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer p {
+            color: #ffaa77;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            padding: 5px 0;
+            color: #ffddbb;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8em; }
+            .card h2 { font-size: 1.3em; }
+            .daftar-isi a { padding: 5px 12px; font-size: 0.7em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="volcano-bg" id="lavaContainer"></div>
+    <div class="magma-glow"></div>
+    <div class="ash-fall"></div>
+
+    <header>
+        <h1>🌋 API VOLKANIK 🔥</h1>
+        <p>ADRIEL NOFRA MARCELINO | NIM: 251410017 | KELAS: SI2A | EXTENSION METHODS - LAVA FLOW</p>
+    </header>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">Volcanic API - Dart Extension</span>
+                <div class="modal-close" onclick="closeModal()">×</div>
+            </div>
+            <iframe class="modal-iframe" id="modalIframe" src="about:blank" allow="fullscreen"></iframe>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="intro-box">
+            <h2>🌋 ERUPTION EXTENSION METHODS 🌋</h2>
+            <p><strong>Extension Methods</strong> adalah fitur Dart yang meletuskan fungsi baru ke tipe data existing — seperti <strong>API Volkanik</strong> yang menyemburkan method lava ke class manapun!</p>
+            <p>✨ <strong>Sintaks Magma:</strong> extension NamaErupsi on TipeData { // method letusan baru }</p>
+            <p style="color:#ff8c42;">🔥 Lava Flow | Magma Chamber | Pyroclastic Code 🔥</p>
+        </div>
+
+        <div class="daftar-isi">
+            <a href="#m1">1. Builder Lava</a>
+            <a href="#m2">2. Tanpa Erupsi</a>
+            <a href="#m3">3. Erupsi Ext 🔥</a>
+            <a href="#m4">4. Sintaks Magma</a>
+            <a href="#m5">5. Null Safety Crater</a>
+            <a href="#m6">6. Volcanic Utils - PRAKTEK 1</a>
+            <a href="#m7">7. Generic Eruption</a>
+            <a href="#m8">8. Unnamed Lava</a>
+            <a href="#m9">9. Konflik Magma</a>
+            <a href="#m10">10. Custom Class Caldera</a>
+            <a href="#m11">11. Validator Erupsi - PRAKTEK 2</a>
+            <a href="#m12">12. Bonus Pyroclastic</a>
+            <a href="#m13">13. Prioritas Magma</a>
+            <a href="#m14">14. Media Volcano 🌋</a>
+        </div>
+
+        <!-- 1. BUILDER PATTERN LAVA -->
+        <div id="m1" class="card">
+            <h2>1. Builder Pattern - Magma Chamber <span class="badge badge-lava">Creational</span></h2>
+            <p>Builder Pattern seperti magma yang naik bertahap sebelum erupsi. Membangun objek kompleks secara bertahap.</p>
+            <div class="code-container">
+                <div class="code-header">📁 magma_builder.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// Volcano Theme - API Volkanik
+// ==========================================
+
+class EruptionConfig {}
+
+class EruptionBuilder {
+  EruptionBuilder lavaTemp(int celcius) {
+    print("🌡️ Suhu Lava : $celcius °C");
+    return this;
+  }
+  EruptionBuilder ashHeight(double km) {
+    print("💨 Abu Vulkanik : $km km");
+    return this;
+  }
+  EruptionBuilder magmaType(String type) {
+    print("🗻 Tipe Magma : $type");
+    return this;
+  }
+  Eruption build() {
+    print("🌋 GUNUNG MERAPI SIAP MEletus!");
+    return Eruption();
+  }
+}
+
+void main() {
+  EruptionBuilder()
+      .lavaTemp(1100)
+      .ashHeight(15)
+      .magmaType('Basaltik')
+      .build();
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=e7d4690ffbbf890ac0049c341bd53a7d&theme=dark&run=true', 'Magma Chamber Builder')">▶ ERUPSIKAN KODE</button>
+        </div>
+
+        <!-- 2. MASALAH TANPA EXTENSION -->
+        <div id="m2" class="card">
+            <h2>2. Sebelum Extension: Abu Vulkanik <span class="badge">Tanpa Letusan</span></h2>
+            <p>Tanpa extension, kita harus membuat utility class terpisah — seperti abu yang bertebaran tanpa arah.</p>
+            <div class="code-container">
+                <div class="code-header">📁 tanpa_erupsi.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+class VolcanoUtils {
+  static String erupt(String mountain) => "🌋 $mountain Meletus!";
+  static bool isActive(int seismic) => seismic > 50;
+}
+
+void main() {
+  print(VolcanoUtils.erupt("Merapi"));
+  print(VolcanoUtils.isActive(75));
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=6e728010793cae10a93b83434c6975c3&theme=dark&run=true', 'Tanpa Extension Volkanik')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 3. SOLUSI EXTENSION ERUPSI -->
+        <div id="m3" class="card">
+            <h2>3. Extension Methods - LETUSAN ! <span class="badge badge-lava">Dengan Erupsi</span></h2>
+            <p>Extension menambahkan method "meletus" langsung ke tipe data String, layaknya API Volkanik.</p>
+            <div class="code-container">
+                <div class="code-header">📁 eruption_extension.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+extension VolcanicExtension on String {
+  String erupt() => "🌋 $this MELEDAK! 🔥";
+  bool get isVolcanoName => contains('Gunung') || contains('Merapi');
+  String toLavaCase() => toUpperCase() + "!!! LAVA!!!";
+}
+
+void main() {
+  var gunung = 'Gunung Semeru';
+  print(gunung.erupt());
+  print("Apakah nama gunung? ${gunung.isVolcanoName}");
+  print('magma'.toLavaCase());
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=6df73eda3991a1b27099d7f8b855d6ab&theme=dark&run=true', 'Eruption Extension Methods')">▶ LEDAKKAN KODE</button>
+        </div>
+
+        <!-- 4. SINTAKS EXTENSION MAGMA -->
+        <div id="m4" class="card">
+            <h2>4. Sintaks Magma Chamber <span class="badge">Getter/Setter Lava</span></h2>
+            <p>Menambahkan getter dan method ke tipe data int untuk skala erupsi.</p>
+            <div class="code-container">
+                <div class="code-header">📁 sintaks_magma.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+extension VolcanicIndex on int {
+  String get skalaErupsi {
+    if (this >= 7) return "☠️ SUPERKOLOSAL (VEI $this)";
+    if (this >= 4) return "🌋 BESAR (VEI $this)";
+    return "🔥 SEDANG (VEI $this)";
+  }
+  bool get isDangerous => this >= 4;
+}
+
+void main() {
+  int vei = 5;
+  print(vei.skalaErupsi);
+  print("Berbahaya? ${vei.isDangerous}");
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=ef84bc646cc2b24107cdef5cea2c44ff&theme=dark&run=true', 'Sintaks Extension Magma')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 5. NULL SAFETY KRATER -->
+        <div id="m5" class="card">
+            <h2>5. Null Safety - Krater Kosong <span class="badge">Nullable Lava</span></h2>
+            <p>Menangani data yang mungkin null seperti kawah yang mungkin kering.</p>
+            <div class="code-container">
+                <div class="code-header">📁 crater_null_safety.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+extension NullableLava on String? {
+  String orLavaFlow() => this ?? "🌋 LAVA MENGALIR DERAS!";
+  bool get isErupting => this != null && this!.isNotEmpty;
+}
+
+void main() {
+  String? craterStatus;
+  print(craterStatus.orLavaFlow());
+  craterStatus = "Aktif";
+  print("Sedang erupsi? ${craterStatus.isErupting}");
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=938503b8c55be758771953f60221cad0&theme=dark&run=true', 'Null Safety Crater')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 6. UTILITIES VOLKANIK - PRAKTEK 1 -->
+        <div id="m6" class="card">
+            <h2>6. Utilities Volcanic Types <span class="badge badge-magma">PRAKTEK 1</span></h2>
+            <p>Extension untuk tipe data dasar dengan tema vulkanologi.</p>
+            <div class="code-container">
+                <div class="code-header">📁 volcanic_utils.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+extension LavaNumber on num {
+  String toTemperature() => "${this}°C 🔥";
+  bool get isEruptionReady => this > 800;
+}
+
+extension MagmaString on String {
+  bool get containsPyroclastic => contains("awan panas");
+  String toAshFall() => "💨 $this (jatuhan abu)";
+}
+
+void main() {
+  double lavaTemp = 950;
+  print(lavaTemp.toTemperature());
+  print("Siap erupsi? ${lavaTemp.isEruptionReady}");
+  var warning = "awan panas mengarah ke selatan";
+  print(warning.toAshFall());
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=e2f68aeca170673c4a77415ae4c0a1ca&theme=dark&run=true', 'Volcanic Utilities')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 7. GENERIC EXTENSIONS -->
+        <div id="m7" class="card">
+            <h2>7. Generic Eruption <span class="badge">Pyroclastic Flow</span></h2>
+            <p>Extension generic untuk semua tipe data yang bisa "meletus".</p>
+            <div class="code-container">
+                <div class="code-header">📁 generic_eruption.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+extension VolcanicFlow<T> on T {
+  String erupt(String mountainName) => "🌋 $mountainName meletuskan $this!";
+  List<T> toLavaChunk(int size) => List.filled(size, this);
+}
+
+void main() {
+  int magnitude = 7;
+  print(magnitude.erupt("Gunung Krakatau"));
+  var chunks = "Lava Pahoehoe".toLavaChunk(3);
+  print("Chunks lava: $chunks");
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=b17217ffafc5e70b1749969ea463e58a&theme=dark&run=true', 'Generic Eruption')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 8. UNNAMED EXTENSIONS -->
+        <div id="m8" class="card">
+            <h2>8. Unnamed Extensions - Lava Dome <span class="badge">Anonim</span></h2>
+            <p>Extension tanpa nama untuk transformasi data kubah lava.</p>
+            <div class="code-container">
+                <div class="code-header">📁 unnamed_lavadome.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+extension on List<int> {
+  List<int> get lavaIntensity => map((e) => e * 2).toList();
+  String get report => "🌋 Intensitas lava: $this";
+}
+
+void main() {
+  var seismic = [3, 5, 7, 4];
+  print(seismic.lavaIntensity);
+  print(seismic.report);
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=6337a33eeef392833ca11dd1888fba87&theme=dark&run=true', 'Unnamed Lava Dome')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 9. KONFLIK NAMA EXTENSION -->
+        <div id="m9" class="card">
+            <h2>9. Konflik Magma Chamber <span class="badge">Resolusi</span></h2>
+            <p>Dua extension dengan method nama sama, diselesaikan dengan memanggil nama extension.</p>
+            <div class="code-container">
+                <div class="code-header">📁 konflik_magma.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+extension LavaFlow on String {
+  String analyze() => "🌊 Aliran Lava: $this";
+}
+extension Pyroclastic on String {
+  String analyze() => "💨 Awan Panas: $this";
+}
+
+void main() {
+  var data = "cepat dan panas";
+  print(LavaFlow(data).analyze());
+  print(Pyroclastic(data).analyze());
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=475536237f1fbfd52843ff3611cc908b&theme=dark&run=true', 'Konflik Extension Volkanik')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 10. CUSTOM CLASS CALDERA -->
+        <div id="m10" class="card">
+            <h2>10. Extension Custom Class <span class="badge badge-lava">Caldera</span></h2>
+            <p>Menambah method ke class VolcanoModel sendiri.</p>
+            <div class="code-container">
+                <div class="code-header">📁 caldera_model.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+class Volcano {
+  final String name;
+  final int height;
+  Volcano(this.name, this.height);
+}
+
+extension VolcanoExt on Volcano {
+  String get eruptionAlert => "⚠️ STATUS: ${name} (${height}m) SIAGA MERAH!";
+  bool get isSuperVolcano => height > 3000;
+}
+
+void main() {
+  var merapi = Volcano("Merapi", 2910);
+  print(merapi.eruptionAlert);
+  print("Supervolcano? ${merapi.isSuperVolcano}");
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=4442807c3849da17883457827ed9c15f&theme=dark&run=true', 'Custom Caldera Extension')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 11. VALIDATOR ERUPSI - PRAKTEK 2 -->
+        <div id="m11" class="card">
+            <h2>11. Validator Erupsi <span class="badge badge-magma">PRAKTEK 2</span></h2>
+            <p>Validator untuk mengecek status ancaman vulkanik.</p>
+            <div class="code-container">
+                <div class="code-header">📁 validator_erupsi.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+extension SeismicValidator on int {
+  bool get isAlertLevel1 => this >= 50 && this < 100;
+  bool get isAlertLevel2 => this >= 100 && this < 200;
+  bool get isEruptionImminent => this >= 200;
+}
+
+extension VolcanicText on String {
+  bool get containsHotCloud => contains("awan panas") || contains("pyroclastic");
+}
+
+void main() {
+  int gempa = 220;
+  print("Erupsi segera? ${gempa.isEruptionImminent}");
+  String laporan = "Terjadi awan panas guguran";
+  print("Mengandung awan panas? ${laporan.containsHotCloud}");
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=16e38b2f854d898c538e61de9398e52d&theme=dark&run=true', 'Validator Erupsi')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 12. BONUS 1 - KONFLIK -->
+        <div id="m12" class="card">
+            <h2>12. Bonus Pyroclastic Flow <span class="badge">Konflik Ekstensi</span></h2>
+            <p>Menghindari konflik dengan import as / hide.</p>
+            <div class="code-container">
+                <div class="code-header">📁 bonus_pyroclastic.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+extension MagmaFlow on int {
+  String warning() => "⚠️ MAGMA LEVEL $this";
+}
+extension LavaFlow on int {
+  String warning() => "🔥 LAVA FLOW $this";
+}
+
+void main() {
+  var level = 75;
+  print(MagmaFlow(level).warning());
+  print(LavaFlow(level).warning());
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=00ba22b5753622686229b83cfe00e5db&theme=dark&run=true', 'Bonus Pyroclastic')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 13. BONUS 2 - PRIORITAS METHOD -->
+        <div id="m13" class="card">
+            <h2>13. Prioritas Magma Asli <span class="badge">Hierarchy Letusan</span></h2>
+            <p>Method asli class lebih diutamakan daripada extension.</p>
+            <div class="code-container">
+                <div class="code-header">📁 prioritas_magma.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// ==========================================
+
+class VolcanoCore {
+  String erupt() => "🌋 ERUPSI DARI CLASS ASLI!";
+}
+extension VolcanoExt on VolcanoCore {
+  String erupt() => "🌋 ERUPSI DARI EXTENSION!";
+}
+
+void main() {
+  var core = VolcanoCore();
+  print(core.erupt());
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=1b39c3d066c3a31b0358ee66bf946e7d&theme=dark&run=true', 'Prioritas Magma')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- 14. MEDIA VOLCANO CHALLENGE -->
+        <div id="m14" class="card">
+            <h2>14. Media Volcano Challenge 🌋 <span class="badge badge-lava">Polymorphism API</span></h2>
+            <p>Implementasi polimorfisme untuk berbagai jenis pemantau gunung api (Sensor thermal, seismik, visual).</p>
+            <div class="code-container">
+                <div class="code-header">📁 media_volcano_api.dart</div>
+                <pre><code>// ==========================================
+// Nama  : ADRIEL NOFRA MARCELINO
+// NIM   : 251410017
+// Volcano Media Monitoring
+// ==========================================
+
+abstract class VolcanoMonitor {
+  void monitor();
+}
+
+class ThermalSensor implements VolcanoMonitor {
+  @override void monitor() => print("🌡️ Sensor Thermal: Suhu magma naik!");
+}
+class SeismicSensor implements VolcanoMonitor {
+  @override void monitor() => print("📊 Sensor Seismik: Gempa vulkanik terdeteksi!");
+}
+class VisualCamera implements VolcanoMonitor {
+  @override void monitor() => print("📹 Kamera Visual: Asap mengepul dari kawah!");
+}
+
+class VolcanoAlertSystem {
+  List<VolcanoMonitor> sensors = [];
+  void addSensor(VolcanoMonitor s) => sensors.add(s);
+  void triggerAll() => sensors.forEach((s) => s.monitor());
+}
+
+void main() {
+  var alert = VolcanoAlertSystem();
+  alert.addSensor(ThermalSensor());
+  alert.addSensor(SeismicSensor());
+  alert.addSensor(VisualCamera());
+  print("=== SISTEM PERINGATAN DINI GUNUNG API ===");
+  alert.triggerAll();
+}</code></pre>
+            </div>
+            <button onclick="openModal('https://dartpad.dev/embed-dart.html?id=7360f0bafe121323de27201df11173a5&theme=dark&run=true', 'Media Volcano Challenge')">▶ JALANKAN KODE</button>
+        </div>
+
+        <!-- KESIMPULAN LAVA -->
+        <div class="card" style="background: linear-gradient(145deg, rgba(80, 35, 15, 0.85), rgba(45, 18, 6, 0.85)); border-color:#ff4500;">
+            <h2>📌 KESIMPULAN: EXTENSION METHODS BERNAPAS API VOLKANIK</h2>
+            <ul>
+                <li>🌋 <strong>Extension Methods</strong> seperti <strong>aliran lava</strong> yang menambah kekuatan ke tipe data existing.</li>
+                <li>🌋 Method asli adalah <strong>magma chamber</strong> asli object, extension adalah letusan baru.</li>
+                <li>🌋 Dengan prioritas <strong>Method Asli > Extension Non-Nullable > Extension Nullable</strong> — mirip skala prioritas VEI.</li>
+                <li>🌋 Sintaks: <code>extension NamaErupsi on TipeData { // method letusan }</code></li>
+                <li>🌋 Extension membuat kode <strong>lebih ekspresif, reusable, dan volcanic power!</strong></li>
+            </ul>
+            <br>
+            <p style="color: #ff8c42; text-align: center;">💥 "Jadilah pengembang seperti gunung berapi — tenang di dasar, tetapi eksplosif dalam berkarya!" 💥</p>
+            <p style="color: #ffaa77; text-align: center; margin-top: 15px;">🌋 ADRIEL NOFRA MARCELINO | 251410017 | EXTENSION METHODS - API VOLKANIK 🌋</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 - ADRIEL NOFRA MARCELINO | NIM: 251410017 | UNIVERSITAS BINADARMA</p>
+        <p style="font-size: 0.85em; margin-top: 8px;">🌋 Extension Methods | Magma Chamber | Volcanic API | Lava Flow Programming 🌋</p>
+    </footer>
+
+    <script>
+        // Membuat partikel lava dinamis
+        function createLavaParticles() {
+            const container = document.getElementById('lavaContainer');
+            for (let i = 0; i < 60; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('lava-particle');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 12 + 's';
+                particle.style.animationDuration = 6 + Math.random() * 6 + 's';
+                particle.style.width = 3 + Math.random() * 6 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = `hsl(${20 + Math.random() * 20}, 100%, 55%)`;
+                container.appendChild(particle);
+            }
+        }
+        createLavaParticles();
+
+        function openModal(url, title) {
+            const modal = document.getElementById('modalOverlay');
+            const iframe = document.getElementById('modalIframe');
+            const titleElement = document.getElementById('modalTitle');
+            iframe.src = url;
+            titleElement.textContent = title;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('modalOverlay');
+            const iframe = document.getElementById('modalIframe');
+            modal.style.display = 'none';
+            iframe.src = 'about:blank';
+            document.body.style.overflow = 'auto';
+        }
+        
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
